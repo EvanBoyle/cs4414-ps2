@@ -19,6 +19,13 @@ fn main() {
 		let cmd = argv.connect(" ");
             let program = argv.remove(0);
 		hist.push(copy cmd);
+		
+		let opts = run::ProcessOptions::new();
+		/*let opts = run::ProcessOptions {
+            out_fd: std::libc::STDOUT_FILENO,
+            .. run::ProcessOptions::new()
+        };
+	*/
             match program {
                 ~"exit"     => {return; }
                 		//must reflect change in directory to mut cwd ^^^
@@ -34,7 +41,10 @@ fn main() {
 
 
 }
-                _           => {run::process_status(program, argv);}
+                _           => {//run::process_status(program, argv);
+				let mut proc = run::Process::new(program, argv, opts);				
+
+}
             }
         }
     }
