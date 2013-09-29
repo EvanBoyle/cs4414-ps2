@@ -4,7 +4,7 @@ fn main() {
     static CMD_PROMPT: &'static str = "gash > ";
     
     loop {
-    	let mut cwd : ~str = os::getenv("PWD").unwrap();
+    	let mut cwd : ~str = os::getcwd().to_str();
     	print(cwd + " ");
         print(CMD_PROMPT);
         let line = io::stdin().read_line();
@@ -19,7 +19,7 @@ fn main() {
             match program {
                 ~"exit"     => {return; }
                 		//must reflect change in directory to mut cwd ^^^
-                ~"cd"	    => {os::change_dir(~PosixPath(argv.remove(0)));}
+                ~"cd"	    => { os::change_dir(~PosixPath(argv.remove(0)));}
                 ~"history"  => {return; }
                 _           => {run::process_status(program, argv);}
             }
