@@ -1,4 +1,5 @@
 use std::{io, run, os, vec, option, libc, task};
+use std::io::WriterUtil;
 
 fn main() {
     static CMD_PROMPT: &'static str = "gash > ";
@@ -8,7 +9,7 @@ fn main() {
     	let mut cwd : ~str = os::getcwd().to_str();
     	print(cwd + " ");
         print(CMD_PROMPT);
-        let line = io::stdin().read_line();
+        let line = std::io::stdin().read_line();
         debug!(fmt!("line: %?", line));
         let mut argv: ~[~str] = line.split_iter(' ').filter(|&x| x != "")
                                  .transform(|x| x.to_owned()).collect();
@@ -65,7 +66,19 @@ fn main() {
 				do task::spawn_sched(task::SingleThreaded) { run::process_status(program, args);}	
 				
 				}
-				else {
+				else {	
+					if(argv.len()>0){
+						if(argv[0].eq(&~">")){
+						argv.remove(0);
+						let fileout = argv.remove(0);
+						let out =run::process_output(program, argv);	
+						let path = Path(fileout);
+						
+  match io::file_writer(&path, [io::Create, io::Append]) {
+    Ok(writer)  => { writer.write_line(fmt!("%s\n", out.output.to_str())); }
+    Err(err)    => fail!(err)};
+						}
+					}
 					run::process_status(program, argv); 
 
 				}
