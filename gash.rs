@@ -36,11 +36,7 @@ fn main() {
 		};
 		
 		
-		//let opts = run::ProcessOptions::new();
-		let opts = run::ProcessOptions {
-            out_fd: Some(std::libc::STDOUT_FILENO),
-            .. run::ProcessOptions::new()
-        }; 
+		
 	
             match program {
                 ~"exit"     => {return; }
@@ -58,13 +54,12 @@ fn main() {
 
 }
                 _           => {
-				//libc::funcs::posix88::unistd::fork();
+				
 				
 				if(bg){
 					println(~"bg");
 					
-				do task::spawn_sched(task::SingleThreaded) { run::process_status(program, args);}	
-				
+					do task::spawn_sched(task::SingleThreaded) { run::process_status(program, args);}
 				}
 				else {	
 					if(argv.len()>0){
@@ -74,15 +69,15 @@ fn main() {
 						let out =run::process_output(program, argv);	
 						let path = Path(fileout);
 						
-  match io::file_writer(&path, [io::Create, io::Append]) {
-    Ok(writer)  => { writer.write_line(fmt!("%s\n", out.output.to_str())); }
-    Err(err)    => fail!(err)};
+  						match io::file_writer(&path, [io::Create, io::Append]) {
+   							Ok(writer)  => { writer.write_line(fmt!("%s\n", out.output.to_str())); }
+    							Err(err)    => fail!(err)};
 						}
 					}
 					run::process_status(program, argv); 
 
 				}
-				//let mut proc = run::Process::new(program, argv, opts);				
+								
 
 }
             }
